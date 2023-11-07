@@ -1,8 +1,12 @@
+import pickle
 from pprint import pprint
 from ab_classes import AddressBook, Record
 from collections import defaultdict
 
 phone_book = AddressBook()
+
+save_file = "phone_book.bin"
+
 
 def input_error(func):
     def inner(*args):
@@ -53,8 +57,18 @@ def show_all():
         input(">>>Press Enter for next record")
         print(p)
 
-def stop_command(*args):
-    return "Good bye!"
+def save_book() -> str:
+    with open(save_file, "wb") as file:
+        pickle.dump(phone_book, file)
+    return f"Phonebook saved"
+
+def load_book() -> AddressBook:
+    global phone_book
+    with open(save_file, "rb") as file:
+        phone_book = pickle.load(file)
+
+def stop_command(*args) -> str:
+    return f"{save_book()}. Good bye!"
 
 def unknown(*args):
     return "Unknown command. Try again."
@@ -64,6 +78,7 @@ COMMANDS = {greeting: "hello",
             change_record: "change",
             find_phone: "phone",
             show_all: "show all",
+            save_book: "save",
             stop_command: ("good bye", "close", "exit")
             }
 
@@ -75,12 +90,13 @@ def parcer(text: str):
 
 
 def main():
+    load_book()
     while True:
         user_input = input(">>>")
         func, data = parcer(user_input)
         result = func(*data)
         print(result)
-        if result == "Good bye!":
+        if result == "Phonebook saved. Good bye!":
             break
 
 

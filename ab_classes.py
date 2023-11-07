@@ -82,7 +82,7 @@ class Record:
     def find_phone(self, phone: str):
         result = None
         for p in self.phones:
-            if p.value.find(phone):
+            if phone in p.phone:
                 result = p
         return result
 
@@ -138,8 +138,9 @@ class AddressBook(UserDict):
             raise ValueError
 
     def find(self, name: str):
-        if name in self.data.keys():
-            return self.data.get(name)
+        for k in self.data.keys():
+            if name in k:
+                return self.data.get(name)
         else:
             return None
 
