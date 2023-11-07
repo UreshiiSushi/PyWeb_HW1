@@ -1,9 +1,6 @@
 import pickle
-import json
 from pathlib import Path
-from pprint import pprint
 from ab_classes import AddressBook, Record
-from collections import defaultdict
 
 save_file = Path("phone_book.bin")
 phone_book = AddressBook()
