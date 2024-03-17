@@ -3,29 +3,22 @@ import re
 from itertools import islice
 from collections import UserDict
 from datetime import date, timedelta
+from abc import ABC, abstractmethod
 
 
-class Field():
-    def __init__(self, value):
-        self.__value = None
-        self.value = value
-
-    @property
-    def value(self):
-        return self.__value
-
-    @value.setter
-    def value(self, value):
-        self.__value = value
-
+class Field(ABC):
+    @abstractmethod
     def __str__(self):
-        return str(self.value)
+        pass
 
 
 class Name(Field):
-    ...
-
-
+    def __init__(self, value) -> None:
+        self.value = value
+    
+    def __str__(self):
+        return self.value
+    
 class Birthday(Field):
     def __init__(self, bd: str):
         self.__birthday = None
@@ -43,6 +36,9 @@ class Birthday(Field):
             self.__birthday = birthday
         else:
             raise ValueError("Wrong date format. Use YYYY-MM-DD")
+        
+    def __str__(self):
+        return self.__birthday
 
 
 class Phone(Field):
@@ -60,12 +56,15 @@ class Phone(Field):
             self.__phone = phone
         else:
             raise ValueError("Wrong phone format. It must contains 10 digits")
+        
+    def __str__(self):
+        return self.__phone
 
 
 class Record:
     def __init__(self, name, phone: str = None, birthday_date: str = None):
         self.name = Name(name)
-        self.phones: list(Phone) = []
+        self.phones: list(Phone) = [] # type: ignore
         self.birthday = None
         if phone:
             self.phones.append(Phone(phone))
@@ -97,7 +96,7 @@ class Record:
     def edit_phone(self, phone: str, new_phone: str) -> str:
         edit_check = False
         for i in range(len(self.phones)):
-            if self.phones[i].value == phone:
+            if self.phones[i].phone == phone:
                 edit_check = True
                 self.phones[i] = Phone(new_phone)
                 return f"Changed phone {phone} for contact {self.name} to {new_phone}"
